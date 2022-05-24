@@ -36,7 +36,7 @@ references:
   deploy_config:
     &deploy_config
     docker:
-      - image: cimg/clojure:lein-2.9.1
+      - image: cimg/clojure:1.11
     working_directory: /home/circleci/jackdaw
 
   test_config:
