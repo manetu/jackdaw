@@ -11,8 +11,7 @@
    [manifold.deferred :as d])
   (:import
    (org.apache.kafka.common.record TimestampType)
-   (org.apache.kafka.clients.consumer ConsumerRecord)
-   (org.apache.kafka.streams TopologyTestDriver)))
+   (org.apache.kafka.clients.consumer ConsumerRecord)))
 
 (set! *warn-on-reflection* false)
 
