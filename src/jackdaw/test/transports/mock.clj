@@ -2,6 +2,7 @@
   (:require
    [clojure.stacktrace :as stacktrace]
    [clojure.tools.logging :as log]
+   [jackdaw.serdes.fn :as jfn]
    [jackdaw.test.journal :as j]
    [jackdaw.test.transports :as t :refer [deftransport]]
    [jackdaw.test.serde :refer [byte-array-serializer byte-array-deserializer
@@ -10,7 +11,8 @@
    [manifold.deferred :as d])
   (:import
    (org.apache.kafka.common.record TimestampType)
-   (org.apache.kafka.clients.consumer ConsumerRecord)))
+   (org.apache.kafka.clients.consumer ConsumerRecord)
+   (org.apache.kafka.streams TopologyTestDriver)))
 
 (set! *warn-on-reflection* false)
 
@@ -161,13 +163,19 @@
     {:messages messages
      :process process}))
 
+(def identity-serializer (jfn/new-serializer {:serialize (fn [_ _ data] data)}))
+
 (deftransport :mock
   [{:keys [driver topics]}]
   (let [serdes        (serde-map topics)
         test-consumer (mock-consumer driver topics (get serdes :deserializers))
         record-fn     (fn [input-record]
                         (try
-                          (.pipeInput driver input-record)
+                          (let [input-topic (.createInputTopic driver
+                                                               (.topic input-record)
+                                                               identity-serializer ;; already serialized in mock-producer
+                                                               identity-serializer)]
+                            (.pipeInput input-topic (.key input-record) (.value input-record)))
                           (catch Exception e
                             (let [trace (with-out-str
                                           (stacktrace/print-cause-trace e))]
