@@ -56,7 +56,7 @@
   ([test-driver topic-config time-ms k v]
    ((producer test-driver topic-config) time-ms k v)))
 
-(defn consume
+(defn consume-raw
   [test-driver
    {:keys [topic-name
            ^Serde key-serde
@@ -66,9 +66,11 @@
                                               (.deserializer key-serde)
                                               (.deserializer value-serde))]
     (when (not (.isEmpty test-output-topic))
-      (-> test-output-topic
-          (.readRecord)
-          (data/datafy)))))
+      (.readRecord test-output-topic))))
+
+(defn consume
+  [test-driver options]
+  (some-> (consume-raw test-driver options) (data/datafy)))
 
 (defn repeatedly-consume
   [test-driver topic-config]

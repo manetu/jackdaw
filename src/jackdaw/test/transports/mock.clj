@@ -3,9 +3,10 @@
    [clojure.stacktrace :as stacktrace]
    [clojure.tools.logging :as log]
    [jackdaw.serdes.fn :as jfn]
+   [jackdaw.streams.mock :as smock]
    [jackdaw.test.journal :as j]
    [jackdaw.test.transports :as t :refer [deftransport]]
-   [jackdaw.test.serde :refer [byte-array-serializer byte-array-deserializer
+   [jackdaw.test.serde :refer [byte-array-serializer byte-array-deserializer byte-array-serde
                                apply-serializers apply-deserializers serde-map]]
    [manifold.stream :as s]
    [manifold.deferred :as d])
@@ -82,9 +83,7 @@
     (let [fetch (fn [[k t]]
                   {:topic k
                    :output (loop [collected []]
-                             (if-let [o (.readOutput driver (:topic-name t)
-                                                     byte-array-deserializer
-                                                     byte-array-deserializer)]
+                             (if-let [o (smock/consume driver (assoc byte-array-serde :topic-name (:topic-name t)))]
                                (recur (conj collected o))
                                collected))})
           topic-batches (->> topic-config
