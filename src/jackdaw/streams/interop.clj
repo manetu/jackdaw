@@ -18,7 +18,7 @@
            [org.apache.kafka.streams
             StreamsBuilder]
            [org.apache.kafka.streams.kstream
-            Aggregator Consumed GlobalKTable Grouped Initializer Joined
+            Aggregator Consumed GlobalKTable Grouped Initializer Joined StreamJoined
             JoinWindows KGroupedStream KGroupedTable KStream KTable
             KeyValueMapper Materialized Merger Predicate Printed Produced
             Reducer SessionWindowedKStream SessionWindows
@@ -278,7 +278,7 @@
             ^KStream (kstream* other-kstream)
             ^ValueJoiner (value-joiner value-joiner-fn)
             ^JoinWindows windows
-            (Joined/with key-serde this-value-serde other-value-serde))))
+            (StreamJoined/with key-serde this-value-serde other-value-serde))))
 
   (left-join-windowed
     [_ other-kstream value-joiner-fn windows]
@@ -297,7 +297,7 @@
                 ^KStream (kstream* other-kstream)
                 ^ValueJoiner (value-joiner value-joiner-fn)
                 ^JoinWindows windows
-                (Joined/with key-serde value-serde other-value-serde))))
+                (StreamJoined/with key-serde value-serde other-value-serde))))
 
   (map
     [_ key-value-mapper-fn]
@@ -327,7 +327,7 @@
                  ^KStream (kstream* other-kstream)
                  ^ValueJoiner (value-joiner value-joiner-fn)
                  ^JoinWindows windows
-                 (Joined/with key-serde value-serde other-value-serde))))
+                 (StreamJoined/with key-serde value-serde other-value-serde))))
 
   (process!
     [_ processor-supplier-fn state-store-names]
