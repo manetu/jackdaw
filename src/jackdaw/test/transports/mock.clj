@@ -85,7 +85,7 @@
                   (let [topic-name (:topic-name t)]
                     {:topic  k
                      :output (loop [collected []]
-                               (if-let [{:keys [key value headers]} (smock/consume driver (assoc byte-array-serde :topic-name topic-name))]
+                               (if-let [{:keys [key value]} (smock/consume driver (assoc byte-array-serde :topic-name topic-name))]
                                  (recur (conj collected (ProducerRecord. topic-name key value)))
                                  collected))}))
           topic-batches (->> topic-config
