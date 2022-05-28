@@ -6,13 +6,14 @@
    [jackdaw.streams.mock :as smock]
    [jackdaw.test.journal :as j]
    [jackdaw.test.transports :as t :refer [deftransport]]
-   [jackdaw.test.serde :refer [byte-array-serializer byte-array-deserializer byte-array-serde
+   [jackdaw.test.serde :refer [byte-array-serde
                                apply-serializers apply-deserializers serde-map]]
    [manifold.stream :as s]
    [manifold.deferred :as d])
   (:import
-   (org.apache.kafka.common.record TimestampType)
-   (org.apache.kafka.clients.consumer ConsumerRecord)))
+    (org.apache.kafka.common.record TimestampType)
+    (org.apache.kafka.clients.consumer ConsumerRecord)
+    (org.apache.kafka.clients.producer ProducerRecord)))
 
 (set! *warn-on-reflection* false)
 
@@ -81,11 +82,12 @@
   [messages topic-config]
   (fn [driver]
     (let [fetch (fn [[k t]]
-                  {:topic k
-                   :output (loop [collected []]
-                             (if-let [o (smock/consume driver (assoc byte-array-serde :topic-name (:topic-name t)))]
-                               (recur (conj collected o))
-                               collected))})
+                  (let [topic-name (:topic-name t)]
+                    {:topic  k
+                     :output (loop [collected []]
+                               (if-let [{:keys [key value headers]} (smock/consume driver (assoc byte-array-serde :topic-name topic-name))]
+                                 (recur (conj collected (ProducerRecord. topic-name key value)))
+                                 collected))}))
           topic-batches (->> topic-config
                              (map fetch)
                              (remove #(empty? (:output %)))
