@@ -318,7 +318,7 @@
     (let [topic-a (mock/topic "topic-a")
           topic-b (mock/topic "topic-b")
           topic-c (mock/topic "topic-c")
-          windows (JoinWindows/of 1000)
+          windows (JoinWindows/ofTimeDifferenceWithNoGrace (Duration/ofMillis 1000))
           driver (mock/build-driver (fn [builder]
                                       (let [left-kstream (k/kstream builder topic-a)
                                             right-kstream (k/kstream builder topic-b)]
@@ -1065,7 +1065,7 @@
                                       (-> builder
                                           (k/kstream topic-a)
                                           (k/group-by (fn [[k v]] (long (/ k 10))) topic-a)
-                                          (k/window-by-time (TimeWindows/of 1000))
+                                          (k/window-by-time (TimeWindows/ofSizeWithNoGrace (Duration/ofMillis 1000)))
                                           (k/reduce + topic-a)
                                           (k/to-kstream)
                                           (k/map (fn [[k v]] [(.key k) v]))
@@ -1089,7 +1089,7 @@
                                       (-> builder
                                           (k/kstream topic-a)
                                           (k/group-by-key)
-                                          (k/window-by-time (TimeWindows/of 1000))
+                                          (k/window-by-time (TimeWindows/ofSizeWithNoGrace (Duration/ofMillis 1000)))
                                           (k/reduce + topic-a)
                                           (k/to-kstream)
                                           (k/map (fn [[k v]] [(.key k) v]))
@@ -1113,7 +1113,7 @@
                                       (-> builder
                                           (k/kstream topic-a)
                                           (k/group-by (fn [[k v]] (long (/ k 10))) topic-a)
-                                          (k/window-by-session (SessionWindows/with 1000))
+                                          (k/window-by-session (SessionWindows/ofInactivityGapWithNoGrace (Duration/ofMillis 1000)))
                                           (k/reduce + topic-a)
                                           (k/to-kstream)
                                           (k/map (fn [[k v]] [(.key k) v]))
@@ -1140,7 +1140,7 @@
                                       (-> builder
                                           (k/kstream topic-a)
                                           (k/group-by-key)
-                                          (k/window-by-session (SessionWindows/with 1000))
+                                          (k/window-by-session (SessionWindows/ofInactivityGapWithNoGrace (Duration/ofMillis 1000)))
                                           (k/aggregate (constantly 0)
                                                        (fn [agg [k v]]
                                                          (+ agg v))
