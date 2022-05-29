@@ -43,21 +43,21 @@ references:
     &test_config
     docker:
       - image: cimg/clojure:1.11
-      - image: confluentinc/cp-zookeeper:6.1.1
+      - image: confluentinc/cp-zookeeper:6.2.4
         environment:
           ZOOKEEPER_CLIENT_PORT: 2181
-      - image: confluentinc/cp-kafka:6.1.1
+      - image: confluentinc/cp-kafka:6.2.4
         environment:
           KAFKA_BROKER_ID: 1
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
           KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
           KAFKA_ZOOKEEPER_CONNECT: localhost:2181
-      - image: confluentinc/cp-schema-registry:6.1.1
+      - image: confluentinc/cp-schema-registry:6.2.4
         environment:
           SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: localhost:2181
           SCHEMA_REGISTRY_HOST_NAME: localhost
           SCHEMA_REGISTRY_LISTENERS: http://localhost:8081
-      - image: confluentinc/cp-kafka-rest:6.1.1
+      - image: confluentinc/cp-kafka-rest:6.2.4
         environment:
           KAFKA_REST_ZOOKEEPER_CONNECT: localhost:2181
           KAFKA_REST_BOOTSTRAP_SERVERS: localhost:9092
