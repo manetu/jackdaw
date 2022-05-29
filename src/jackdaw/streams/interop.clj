@@ -9,27 +9,21 @@
             Collection]
            [java.util.regex
             Pattern]
-           [org.apache.kafka.common.serialization
-            Serde]
            [java.time
             Duration]
            [org.apache.kafka.streams
-            KafkaStreams]
-           [org.apache.kafka.streams
             StreamsBuilder]
            [org.apache.kafka.streams.kstream
-            Aggregator Consumed GlobalKTable Grouped Initializer Joined
+            Aggregator Consumed GlobalKTable Grouped Initializer Joined StreamJoined
             JoinWindows KGroupedStream KGroupedTable KStream KTable
             KeyValueMapper Materialized Merger Predicate Printed Produced
             Reducer SessionWindowedKStream SessionWindows
             Suppressed Suppressed$BufferConfig TimeWindowedKStream ValueJoiner
-            ValueMapper ValueMapperWithKey ValueTransformerSupplier Windows]
-           [org.apache.kafka.streams.processor
-            StreamPartitioner]
+            ValueMapper ValueTransformerSupplier Windows]
            [org.apache.kafka.streams.state
-            KeyValueStore Stores]
-           (org.apache.kafka.streams.processor.api
-            ProcessorSupplier)
+            Stores]
+           [org.apache.kafka.streams.processor.api
+            ProcessorSupplier]
            [org.apache.kafka.streams
             Topology$AutoOffsetReset]))
 
@@ -278,7 +272,7 @@
             ^KStream (kstream* other-kstream)
             ^ValueJoiner (value-joiner value-joiner-fn)
             ^JoinWindows windows
-            (Joined/with key-serde this-value-serde other-value-serde))))
+            (StreamJoined/with key-serde this-value-serde other-value-serde))))
 
   (left-join-windowed
     [_ other-kstream value-joiner-fn windows]
@@ -297,7 +291,7 @@
                 ^KStream (kstream* other-kstream)
                 ^ValueJoiner (value-joiner value-joiner-fn)
                 ^JoinWindows windows
-                (Joined/with key-serde value-serde other-value-serde))))
+                (StreamJoined/with key-serde value-serde other-value-serde))))
 
   (map
     [_ key-value-mapper-fn]
@@ -327,13 +321,13 @@
                  ^KStream (kstream* other-kstream)
                  ^ValueJoiner (value-joiner value-joiner-fn)
                  ^JoinWindows windows
-                 (Joined/with key-serde value-serde other-value-serde))))
+                 (StreamJoined/with key-serde value-serde other-value-serde))))
 
   (process!
     [_ processor-supplier-fn state-store-names]
     (.process ^KStream kstream
               ^ProcessorSupplier (processor-supplier processor-supplier-fn)
-              (into-array String state-store-names)))
+              ^"[Ljava.lang.String;" (into-array String state-store-names)))
 
   (select-key
     [_ select-key-value-mapper-fn]
