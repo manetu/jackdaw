@@ -372,7 +372,7 @@
     (let [topic-a (mock/topic "topic-a")
           topic-b (mock/topic "topic-b")
           topic-c (mock/topic "topic-c")
-          windows (JoinWindows/ofTimeDifferenceWithNoGrace (Duration/ofMillis 1000))
+          windows (JoinWindows/of (Duration/ofMillis 1000))
           driver (mock/build-driver (fn [builder]
                                       (let [left-kstream (k/kstream builder topic-a)
                                             right-kstream (k/kstream builder topic-b)]
