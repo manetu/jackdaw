@@ -13,7 +13,9 @@
   (:import
     (org.apache.kafka.common.record TimestampType)
     (org.apache.kafka.clients.consumer ConsumerRecord)
-    (org.apache.kafka.clients.producer ProducerRecord)))
+    (org.apache.kafka.clients.producer ProducerRecord)
+    (org.apache.kafka.common.header.internals RecordHeaders)
+    (java.util Optional)))
 
 (set! *warn-on-reflection* false)
 
@@ -43,19 +45,23 @@
   node by the TopologyTestDriver"
   [_topic-config]
   (fn [m]
-    (let [record (ConsumerRecord. (get-in m [:topic :topic-name])
+    (let [record (ConsumerRecord. ^String (get-in m [:topic :topic-name])
                                   (int -1)
                                   (long -1)
-                                  (:timestamp m)
+                                  (long (:timestamp m))
                                   TimestampType/CREATE_TIME,
-                                  (if-let [k (:key m)]
-                                    (count k)
-                                    0)
-                                  (if-let [v (:value m)]
-                                    (count v)
-                                    0)
+                                  (int
+                                    (if-let [k (:key m)]
+                                      (count k)
+                                      0))
+                                  (int
+                                    (if-let [v (:value m)]
+                                      (count v)
+                                      0))
                                   (:key m)
-                                  (:value m))]
+                                  (:value m)
+                                  (RecordHeaders.)
+                                  (Optional/empty))]
       (set-headers record (:headers m))
       (assoc m :input-record record))))
 
