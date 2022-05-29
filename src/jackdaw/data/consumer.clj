@@ -6,7 +6,8 @@
 
 (import '[org.apache.kafka.clients.consumer
           ConsumerRecord OffsetAndTimestamp]
-        'org.apache.kafka.common.header.Headers)
+        'org.apache.kafka.common.header.Headers
+        'java.util.Optional)
 
 (set! *warn-on-reflection* true)
 
@@ -26,7 +27,8 @@
                    (int key-size)
                    (int value-size)
                    key value
-                   ^Headers headers))
+                   ^Headers headers
+                   (Optional/empty)))
 
 (defn map->ConsumerRecord
   "Given a `::consumer-record`, build an equivalent `ConsumerRecord`.
