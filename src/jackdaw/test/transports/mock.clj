@@ -48,7 +48,6 @@
                                   (long -1)
                                   (:timestamp m)
                                   TimestampType/CREATE_TIME,
-                                  (long ConsumerRecord/NULL_CHECKSUM)
                                   (if-let [k (:key m)]
                                     (count k)
                                     0)

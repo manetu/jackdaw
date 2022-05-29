@@ -16,18 +16,17 @@
   Convenient for testing the consumer API and its helpers."
   [{:keys [:topic-name]} partition offset ts ts-type
    key-size value-size key value ^Headers headers]
-  (ConsumerRecord. topic-name
+  (ConsumerRecord. ^String topic-name
                    (int partition)
                    (long offset)
                    (long ts)
                    (if (keyword? ts-type)
                      (->TimestampType ts-type)
                      ^TimestampType ts-type)
-                   nil ;; Deprecated checksum
                    (int key-size)
                    (int value-size)
                    key value
-                   headers))
+                   ^Headers headers))
 
 (defn map->ConsumerRecord
   "Given a `::consumer-record`, build an equivalent `ConsumerRecord`.
@@ -55,8 +54,6 @@
    :headers (.headers r)
    :partition (.partition r)
    :timestamp (.timestamp r)
-   ;; Deprecated field
-   ;; :checksum (.checksum r)
    :timestamp-type (TimestampType->data (.timestampType r))
    :offset (.offset r)
    :serialized-key-size (.serializedKeySize r)
