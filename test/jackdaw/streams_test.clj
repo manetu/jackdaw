@@ -732,9 +732,7 @@
           ;; default is used: 24h - window
           window       (Duration/ofMillis 100)
           grace        (Duration/ofMillis 1)
-          time-windows (-> window
-                           TimeWindows/of
-                           (.grace grace))]
+          time-windows (TimeWindows/ofSizeAndGrace window grace)]
 
       (with-open [driver (mock/build-driver (fn [builder]
                                               (-> builder
@@ -768,9 +766,7 @@
 
           window       (Duration/ofMillis 100)
           grace        (Duration/ofMillis 1)
-          time-windows (-> window
-                           TimeWindows/of
-                           (.grace grace))
+          time-windows (TimeWindows/ofSizeAndGrace window grace)
           max-records  2]
 
       (with-open [driver (mock/build-driver (fn [builder]
@@ -806,9 +802,7 @@
 
           window       (Duration/ofMillis 100)
           grace        (Duration/ofMillis 1)
-          time-windows (-> window
-                           TimeWindows/of
-                           (.grace grace))
+          time-windows (TimeWindows/ofSizeAndGrace window grace)
           max-records  2]
 
       (with-open [driver (mock/build-driver (fn [builder]
